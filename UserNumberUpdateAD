@@ -1,0 +1,26 @@
+Import-Module ActiveDirectory
+
+# Specify the path to your CSV file
+$csvFilePath = "C:\path\to\your\csv\file.csv"
+
+# Import the CSV file
+$users = Import-Csv -Path $csvFilePath
+
+# Loop through each user in the CSV file
+foreach ($user in $users) {
+    # Get the username and new telephone number from the current row
+    $username = $user.username
+    $newTelephoneNumber = $user.newTelephoneNumber
+    
+    # Get the user from Active Directory
+    $adUser = Get-ADUser -Identity $username
+    
+    # Check if the user exists
+    if ($adUser) {
+        # Update the telephone number attribute for the user
+        Set-ADUser -Identity $username -OfficePhone $newTelephoneNumber
+        Write-Host "Telephone number updated successfully for user: $username"
+    } else {
+        Write-Host "User $username not found in Active Directory"
+    }
+}
